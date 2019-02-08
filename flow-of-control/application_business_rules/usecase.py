@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from injector import inject
+from application_business_rules.interface_input_output import IEditStringOutputPort, IEditStringUseCase
 
-from application_business_rules.interface_input_output import IEditStringOutputPort
 
+class ToCsvUseCase(IEditStringUseCase):
 
-class ToCsvUseCase:
-
+    @inject
     def __init__(self, output_port : IEditStringOutputPort):
         self.__output_port = output_port
 
@@ -13,8 +14,9 @@ class ToCsvUseCase:
         result = ','.join(data)
         self.__output_port.emit(result)
 
-class ToTsvUseCase:
+class ToTsvUseCase(IEditStringUseCase):
 
+    @inject
     def __init__(self, output_port : IEditStringOutputPort):
         self.__output_port = output_port
 

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
 
-class ConsolePresenter:
+from application_business_rules.interface_input_output import IEditStringOutputPort
+
+class ConsolePresenter(IEditStringOutputPort):
 
     def emit(self, data : str)->None:
         print(data)
 
-class SaveToFilePresenter:
+class SaveToFilePresenter(IEditStringOutputPort):
     __FILE_PATH = "out.txt"
 
     def emit(self, data : str)->None:
