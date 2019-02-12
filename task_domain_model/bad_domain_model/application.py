@@ -25,7 +25,7 @@ class TaskApplication:
         if (task.can_postpone() is False):
             raise Exception("最大延期回数を超過しています")
 
-        due_date = task.get_due_date() + datetime.timedelta(days=11)
+        due_date = task.get_due_date() + datetime.timedelta(days=1)
         task.set_due_date(due_date)
 
         task.set_postpone_count(task.get_postpone_count() + 1)
