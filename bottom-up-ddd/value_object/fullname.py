@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+
 class FullName:
 
-    def __init__(self, first_name: str, family_name : str):
+    def __init__(self, first_name: str, family_name: str):
         self.__first_name = first_name
         self.__family_name = family_name
 
@@ -11,6 +12,7 @@ class FullName:
 
     def family_name(self):
         return self.__family_name
+
 
 def main():
 
