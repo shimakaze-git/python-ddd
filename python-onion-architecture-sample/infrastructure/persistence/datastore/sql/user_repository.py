@@ -1,7 +1,10 @@
 from domain.model.user_model import User
 from domain.repository.user_repository import IFUserRepository
 
+from infrastructure.persistence.datamodel.user import Users
+from infrastructure.persistence.config import session
 
+# from sqlalchemy import desc
 
 
 # package datastore
@@ -68,20 +71,16 @@ class UserRepository(IFUserRepository):
 
     def fetch(self)->list:
 
-        # users = self.conn.query(User).\
-        #             order_by(desc(User.id)).\
-        #             all()
-        # return users
+        users = session.query.order_by(Users.id.desc()).all()
 
-        # users = session.query(User).\
-        # filter(User.name=="tomo").\
-        # all()
+        # var (
+        #     users []*model.User
+        #     err   error
+        # )
+        # err = r.Conn.Order("id desc").Find(&users).Error
+        # return users, err
 
-        # user_tomo = session.query(User).\
-        #     filter(User.id==1).\
-        #     first()
-
-        pass
+        # pass
 
     def fetch_by_id(self, id: int)->User:
         pass

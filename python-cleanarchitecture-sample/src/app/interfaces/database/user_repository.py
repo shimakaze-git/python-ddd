@@ -3,12 +3,24 @@
 
 
 from domain.user import User
+from usecase.user_repository import IFUserRepository
 from .sqlhandler import SqlHandler
 # from interfaces.database.sqlhandler import SqlHandler
 
 
-# class UserRepository(SqlHandler):
-#     pass
+class UserRepository(IFUserRepository):
+
+    # def __init__(self):
+    #     super(UserRepository, self).__init__()
+
+    def store(self):
+        pass
+
+    def find_by_id(self, identifier: int):
+        pass
+
+    def find_all(self):
+        pass
 
 # package database
 
