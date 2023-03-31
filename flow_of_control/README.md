@@ -16,154 +16,174 @@
 
 
 ## クラスでみる制御の流れ
-- 1.ControllerがUseCaseInputPort(interface)を利用する（メソッドを呼ぶ）
-- 2.UseCaseInputPort の実装である UseCaseInteractor の処理が実行される
-- 3.UseCaseInteractor は処理の結果を UseCaseOutputPort に伝える
-- 4.UseCaseOutputPort の実装である Presenter において、出力が表現される
+- 1 : `Controller`が`UseCaseInputPort(interface)`を利用する（メソッドを呼ぶ）
+- 2 : `UseCaseInputPort` の実装である `UseCaseInteractor` の処理が実行される
+- 3 : `UseCaseInteractor` は処理の結果を `UseCaseOutputPort` に伝える
+- 4 : `UseCaseOutputPort` の実装である `Presenter` において、出力が表現される
 
-Controller -> UseCaseInteractor -> Presenterという順序で実行されているため、flow of control通りの制御の流れになっている。
+`Controller -> UseCaseInteractor -> Presenter`という順序で実行されているため、`flow of control`通りの制御の流れになっている。
 
 ---
 
 ## 実際のソースコード
-- Controllerに該当
 
-[interface_adapters/controller.py](./interface_adapters/controller.py) Controllerクラス
+### Controllerに該当
 
-コンストラクタで。IEditStringUseCase型のオブジェクトであるinput_portを受け取る。
-IEditStringUseCaseは、flow of controlでいうUseCaseInputPortである。
+[interface_adapters/controller.py](./interface_adapters/controller.py)
 
-IEditStringUseCaseクラス自体は抽象クラスであり、具体的な実装を持っていない。
-input_portで受け取ったオブジェクトは、IEditStringUseCaseを継承した具象オブジェクト。
+コンストラクタで、`applications/interfaces/InterfaceUsecaseEditTextInputPort`型のオブジェクトであるinput_portを受け取る。
+`applications/interfaces/InterfaceUsecaseEditTextInputPort`は、`flow of control`でいう`UseCaseInputPort`である。
 
-ちなみにIEditStringUseCaseを継承した具象オブジェクトは、UseCaseInteractorのことです。
-executeメソッドで、UseCaseInteractorに該当するオブジェクトのhandleメソッドを実行していることがわかります。
+`applications/interfaces/InterfaceUsecaseEditTextInputPort`クラス自体は抽象クラスであり、具体的な実装を持っていない。
+input_portで受け取ったオブジェクトは、`applications/interfaces/InterfaceUsecaseEditTextInputPort`を継承した具象オブジェクト。
+
+ちなみに`applications/interfaces/InterfaceUsecaseEditTextInputPort`を継承した具象オブジェクトは、`UseCaseInteractor`のことです。
+`execute`メソッドで、`UseCaseInteractor`に該当するオブジェクトの`handle`メソッドを実行していることがわかります。
 
 ```python
-from application_business_rules.interface_input_output import IEditStringUseCase
+from applications.interfaces import InterfaceUsecaseEditTextInputPort
 
 
 class Controller:
-    def __init__(self, input_port : IEditStringUseCase):
+    """"""
+    __input_port: InterfaceUsecaseEditTextInputPort
+
+    def __init__(self, input_port: InterfaceUsecaseEditTextInputPort) -> None:
         self.__input_port = input_port
 
-    def execute(self, source : list)->None:
-        self.__input_port.handle(source)
-
+    def execute(self, text_list: list[str]) -> None:
+        self.__input_port.handle(text_list)
 ```
 
-- UseCaseInputPortに該当
+### UseCaseInputPortに該当
 
-[application_business_rules/interface_input_output.py](./application_business_rules/interface_input_output.py) IEditStringUseCaseクラス
+[applications/interfaces.py](./applications/interfaces.py)
 
-インターフェースに該当するものですが、Pythonにはインターフェースの機能がないため、抽象クラスで再現します。
+インターフェースに該当するものですが、Pythonにはインターフェースの機能がないため、抽象クラスで再現する。
 
-IEditStringUseCase型を継承した具象クラスは、handleメソッドを実装させることを強制させます。
-UseCaseInteractorに該当するクラスにIEditStringUseCase型を継承させます。
+`applications/interfaces/InterfaceUsecaseEditTextInputPort`型を継承した具象クラスは、**handleメソッドを実装させることを強制**させます。
+UseCaseInteractorに該当するクラスに`applications/interfaces/InterfaceUsecaseEditTextInputPort`型を継承させます。
 
 ```python
 from abc import ABCMeta, abstractmethod
 
-class IEditStringUseCase(metaclass=ABCMeta):
+
+class InterfaceUsecaseEditTextInputPort(metaclass=ABCMeta):
+    """"""
+
     @abstractmethod
-    def handle(self, data : list)->None:
-        pass
-
+    def handle(self, text_list: list[str]) -> None:
+        raise NotImplementedError
 ```
 
-- UseCaseInteractorに該当
+### UseCaseInteractorに該当
 
-[application_business_rules/usecase.py](./application_business_rules/usecase.py) ToCsvUseCase,ToTsvUseCase クラス
+[applications/use_cases.py](./applications/use_cases.py)
 
-ロジックを記述するクラスです。ToCsvUseCase,ToTsvUseCaseのどちらもIEditStringUseCaseを継承していることがわかります。
-flow of controlの白抜きの矢印の図は``関連``を表しています。
+**ロジックを記述するクラス**です。
+`ToCsvUseCaseInteractor`,`ToTsvUseCaseInteractor`のどちらも`applications/interfaces/InterfaceUsecaseEditTextInputPort`を継承していることがわかる。
+`flow of control`の`白抜きの矢印`の図は`関連`を表しています。
 
-コンストラクタでは、IEditStringOutputPort型のオブジェクトであるoutput_portを受け取る。
-IEditStringOutputPortは、flow of controlでいうUseCaseOutputPortである。
+コンストラクタでは、`applications/interfaces/InterfaceUsecaseEditTextOutputPort`型のオブジェクトである`output_port`を受け取る。
+`applications/interfaces/InterfaceUsecaseEditTextOutputPort`は、`flow of control`でいう`UseCaseOutputPort`である。
 
-IEditStringOutputPortクラス自体も抽象クラスであり、具体的な実装は持っていない。
-output_portで受け取ったオブジェクトは、IEditStringOutputPortを継承した具象オブジェクト。
+`applications/interfaces/InterfaceUsecaseEditTextOutputPort`クラス自体も抽象クラスであり、具体的な実装は持っていない。
+`output_port`で受け取ったオブジェクトは、`applications/interfaces/InterfaceUsecaseEditTextOutputPort`を継承した具象オブジェクト。
 
-ちなみにIEditStringOutputPortを継承した具象オブジェクトは、Presenterのことです。
-handleメソッドで、UseCaseOutputPortに該当するオブジェクトのemitメソッドを実行していることがわかります。
+ちなみに`applications/interfaces/InterfaceUsecaseEditTextOutputPort`を継承した具象オブジェクトは、`Presenter`のことです。
+`handle`メソッドで、`UseCaseOutputPort`に該当するオブジェクトの`emit`メソッドを実行していることがわかる。
 
-flow of controlの図でわかる通り、UseCaseOutputPort型の抽象クラス(インターフェース)を利用しています。
-これによってわかるのは、UseCaseInteractorに該当するToCsvUseCase,ToTsvUseCaseのどちらも具象クラスには依存していないことがわかる。
-あくまでも抽象クラス(インターフェース)に依存していることがわかります。
+`flow of control`の図でわかる通り、`UseCaseOutputPort`型の抽象クラス(インターフェース)を利用しています。
+これによってわかるのは、`UseCaseInteractor`に該当する`ToCsvUseCaseInteractor`,`ToTsvUseCaseInteractor`のどちらも具象クラスには依存していないことがわかる。
+あくまでも**抽象クラス(インターフェース)に依存している**ことがわかります。
 
+```python
+from interfaces import InterfaceUsecaseEditTextInputPort, InterfaceUsecaseEditTextOutputPort
+
+
+class ToCsvUseCaseInteractor(InterfaceUsecaseEditTextInputPort):
+    """"""
+    output_port: InterfaceUsecaseEditTextOutputPort
+
+    # @inject
+    def __init__(self, output_port: InterfaceUsecaseEditTextOutputPort) -> None:
+        """"""
+        self.output_port = output_port
+
+    def handle(self, text_list: list[str]) -> None:
+        """"""
+
+        text: str = ",".join(text_list)
+        self.output_port.emit(text)
+
+
+class ToTsvUseCaseInteractor(InterfaceUsecaseEditTextInputPort):
+    """"""
+    output_port: InterfaceUsecaseEditTextOutputPort
+
+    # @inject
+
+    def __init__(self, output_port: InterfaceUsecaseEditTextOutputPort):
+        self.output_port = output_port
+
+    def handle(self, text_list: list[str]) -> None:
+        """"""
+
+        text: str = "\t".join(text_list)
+        self.output_port.emit(text)
 ```
-# -*- coding: utf-8 -*-
-from application_business_rules.interface_input_output import IEditStringOutputPort, IEditStringUseCase
 
+### UseCaseOutputPortに該当
 
-class ToCsvUseCase(IEditStringUseCase):
-
-    def __init__(self, output_port : IEditStringOutputPort):
-        self.__output_port = output_port
-
-    def handle(self, data : list)->None:
-        result = None
-        result = ','.join(data)
-        self.__output_port.emit(result)
-
-class ToTsvUseCase(IEditStringUseCase):
-
-    def __init__(self, output_port : IEditStringOutputPort):
-        self.__output_port = output_port
-
-    def handle(self, data : list)->None:
-        result = '\t'.join(data)
-        self.__output_port.emit(result)
-
-```
-
-- UseCaseOutputPortに該当
-
-[application_business_rules/interface_input_output.py](./application_business_rules/interface_input_output.py) IEditStringOutputPortクラス
+[applications/interfaces.py](./applications/interfaces.py)
 
 インターフェースに該当するものですが、Pythonにはインターフェースの機能がないため、抽象クラスで再現します。
 
-IEditStringOutputPort型を継承した具象クラスは、emitメソッドを実装させることを強制させます。
-Presenterに該当するクラスにIEditStringOutputPort型を継承させます。
+`applications/interfaces/InterfaceUsecaseEditTextOutputPort`型を継承した具象クラスは、**emitメソッドを実装させることを強制**させる。
+`Presenter`に該当するクラスに`applications/interfaces/InterfaceUsecaseEditTextOutputPort`型を継承させる。
 
-```
-# -*- coding: utf-8 -*-
-
+```python
 from abc import ABCMeta, abstractmethod
 
-class IEditStringOutputPort(metaclass=ABCMeta):
+class InterfaceUsecaseEditTextOutputPort(metaclass=ABCMeta):
+    """"""
+
     @abstractmethod
-    def emit(self, data : str)->None:
-        pass
+    def emit(self, text: str) -> None:
+        raise NotImplementedError
 ```
 
 
-- Presenterに該当
+### Presenterに該当
 
-[interface_adapters/presenter.py](./interface_adapters/presenter.py) ConsolePresenter,SaveToFilePresenterクラス
+[interface_adapters/presenter.py](./interface_adapters/presenter.py)
 
-出力部分を表示するクラス。UseCaseOutputPortに該当するIEditStringOutputPort型を継承している。
-ConsolePresenterもSaveToFilePresenterも抽象クラスであるIEditStringOutputPortに``関連``することになる。
+- ConsolePresenter
+- SaveToFilePresenter
 
-```
-# -*- coding: utf-8 -*-
-import os
+出力部分を表示するクラス。
 
-from application_business_rules.interface_input_output import IEditStringOutputPort
+`UseCaseOutputPort`に該当する`applications/interfaces/InterfaceUsecaseEditTextOutputPort`型を継承している。
+`ConsolePresente`rも`SaveToFilePresenter`も抽象クラスである`applications/interfaces/InterfaceUsecaseEditTextOutputPort`に`関連`することになる。
 
-class ConsolePresenter(IEditStringOutputPort):
+```python
+from applications.interfaces import InterfaceUsecaseEditTextOutputPort
 
-    def emit(self, data : str)->None:
-        print(data)
 
-class SaveToFilePresenter(IEditStringOutputPort):
-    __FILE_PATH = "out.txt"
+class ConsolePresenter(InterfaceUsecaseEditTextOutputPort):
+    """"""
 
-    def emit(self, data : str)->None:
+    def emit(self, text: str) -> None:
+        print("ConsolePresenter text", text)
+
+
+class SaveToFilePresenter(InterfaceUsecaseEditTextOutputPort):
+    __FILE_PATH: str = "out.txt"
+
+    def emit(self, text: str) -> None:
         file = open(self.__FILE_PATH, 'w')
-        file.write(data)
+        file.write(text)
         file.close()
-
 ```
 
 

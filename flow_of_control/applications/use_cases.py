@@ -1,7 +1,4 @@
-# # -*- coding: utf-8 -*-
 # from injector import inject
-
-# from flow_of_control.applications.interfaces import InterfaceUsecaseEditTextInputPort, InterfaceUsecaseEditTextOutputPort
 from interfaces import InterfaceUsecaseEditTextInputPort, InterfaceUsecaseEditTextOutputPort
 
 
