@@ -41,18 +41,20 @@ input_portで受け取ったオブジェクトは、`applications/interfaces/Int
 `execute`メソッドで、`UseCaseInteractor`に該当するオブジェクトの`handle`メソッドを実行していることがわかります。
 
 ```python
-from applications.interfaces import InterfaceUsecaseEditTextInputPort
+# from injector import inject
+from flow_of_control.applications.interfaces import InterfaceUsecaseEditTextInputPort
 
 
 class Controller:
     """"""
-    __input_port: InterfaceUsecaseEditTextInputPort
+    input_port: InterfaceUsecaseEditTextInputPort
 
+    # @inject
     def __init__(self, input_port: InterfaceUsecaseEditTextInputPort) -> None:
-        self.__input_port = input_port
+        self.input_port = input_port
 
     def execute(self, text_list: list[str]) -> None:
-        self.__input_port.handle(text_list)
+        self.input_port.handle(text_list)
 ```
 
 ### UseCaseInputPortに該当
@@ -98,7 +100,11 @@ class InterfaceUsecaseEditTextInputPort(metaclass=ABCMeta):
 あくまでも**抽象クラス(インターフェース)に依存している**ことがわかります。
 
 ```python
-from interfaces import InterfaceUsecaseEditTextInputPort, InterfaceUsecaseEditTextOutputPort
+# from injector import inject
+from flow_of_control.applications.interfaces import (
+    InterfaceUsecaseEditTextInputPort,
+    InterfaceUsecaseEditTextOutputPort
+)
 
 
 class ToCsvUseCaseInteractor(InterfaceUsecaseEditTextInputPort):
@@ -122,7 +128,6 @@ class ToTsvUseCaseInteractor(InterfaceUsecaseEditTextInputPort):
     output_port: InterfaceUsecaseEditTextOutputPort
 
     # @inject
-
     def __init__(self, output_port: InterfaceUsecaseEditTextOutputPort):
         self.output_port = output_port
 
@@ -167,7 +172,7 @@ class InterfaceUsecaseEditTextOutputPort(metaclass=ABCMeta):
 `ConsolePresente`rも`SaveToFilePresenter`も抽象クラスである`applications/interfaces/InterfaceUsecaseEditTextOutputPort`に`関連`することになる。
 
 ```python
-from applications.interfaces import InterfaceUsecaseEditTextOutputPort
+from flow_of_control.applications.interfaces import InterfaceUsecaseEditTextOutputPort
 
 
 class ConsolePresenter(InterfaceUsecaseEditTextOutputPort):
@@ -184,6 +189,49 @@ class SaveToFilePresenter(InterfaceUsecaseEditTextOutputPort):
         file = open(self.__FILE_PATH, 'w')
         file.write(text)
         file.close()
+
+```
+
+## Test Run
+
+```bash
+$ pytest -s -v tests
+```
+
+## DI Container
+
+```bash
+$ pip install injector
+```
+
+抽象クラスである`InterfaceUsecaseEditTextOutputPort`と`InterfaceUsecaseEditTextInputPort`の引数に対して、実行時にインスタンスを渡すことが可能になる。これがDIコンテナという機能です。
+
+詳細はこちらになります。
+
+[PythonでのDependency Injection 依存性の注入](https://qiita.com/mkgask/items/d984f7f4d94cc39d8e3c#injector)
+
+```python
+from injector import Injector, Module, Binder
+
+from flow_of_control.interface_adapters.presenter import ConsolePresenter
+from flow_of_control.interface_adapters.controller import Controller
+
+from flow_of_control.applications.interfaces import(
+    InterfaceUsecaseEditTextInputPort,
+    InterfaceUsecaseEditTextOutputPort
+)
+from flow_of_control.applications.use_cases import ToCsvUseCaseInteractor
+
+
+class DIContainer(Module):
+    def configure(self, binder: Binder):
+        binder.bind(InterfaceUsecaseEditTextOutputPort, to=ConsolePresenter)
+        binder.bind(InterfaceUsecaseEditTextInputPort, to=ToCsvUseCaseInteractor)
+
+
+injector: Injector = Injector([DIContainer()])
+controller: Controller = injector.get(Controller)
+controller.execute(["source", "data", "foo", "bar"])
 ```
 
 

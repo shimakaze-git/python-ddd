@@ -1,12 +1,12 @@
-# from injector import inject
-from interfaces import InterfaceUsecaseEditTextInputPort, InterfaceUsecaseEditTextOutputPort
+from injector import inject
+from flow_of_control.applications.interfaces import InterfaceUsecaseEditTextInputPort, InterfaceUsecaseEditTextOutputPort
 
 
 class ToCsvUseCaseInteractor(InterfaceUsecaseEditTextInputPort):
     """"""
     output_port: InterfaceUsecaseEditTextOutputPort
 
-    # @inject
+    @inject
     def __init__(self, output_port: InterfaceUsecaseEditTextOutputPort) -> None:
         """"""
         self.output_port = output_port
@@ -22,8 +22,7 @@ class ToTsvUseCaseInteractor(InterfaceUsecaseEditTextInputPort):
     """"""
     output_port: InterfaceUsecaseEditTextOutputPort
 
-    # @inject
-
+    @inject
     def __init__(self, output_port: InterfaceUsecaseEditTextOutputPort):
         self.output_port = output_port
 

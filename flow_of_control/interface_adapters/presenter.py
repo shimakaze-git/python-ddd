@@ -1,4 +1,4 @@
-from applications.interfaces import InterfaceUsecaseEditTextOutputPort
+from flow_of_control.applications.interfaces import InterfaceUsecaseEditTextOutputPort
 
 
 class ConsolePresenter(InterfaceUsecaseEditTextOutputPort):
