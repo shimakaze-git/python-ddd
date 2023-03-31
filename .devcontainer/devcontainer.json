@@ -1,0 +1,26 @@
+{
+  "name": "python-ddd",
+  "dockerFile": "Dockerfile",
+  "runArgs": [
+    // Sync git config
+    "-v",
+    "${env:HOME}${env:USERPROFILE}/.gitconfig:/root/.gitconfig"
+  ],
+  "postCreateCommand": [
+    // "pip install -r requirements.txt"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "editorconfig.editorconfig",
+        "ms-python.python"
+      ],
+      "settings": {
+        "python.pythonPath": "/usr/local/bin/python",
+        "python.analysis.extraPaths": [
+          "/usr/local/lib/python3.11/site-packages/"
+        ]
+      }
+    }
+  }
+}

@@ -1,16 +1,21 @@
 # Using Python Flow of control in Clean Architecture
-Clean Architectureの右下の図にあるflow of controlについて解説し、サンプルコードをPythonで実装してみました。
+
+`Clean Architecture`の右下の図にある`flow of control`について解説し、サンプルコードをPythonで実装してみました。
 元々は、DDDをわかりやすく解説している[こちらの記事](https://nrslib.com/clean-flow-of-control/)のサンプルコードをPythonで実装し、自分なりの補足などをまとめた内容です。
 
-flow of controlとは読んで字のごとく、「制御の流れ」という意味で、プログラムの処理の順番のことです。
-図で見れば、Flow of controlは、Controller -> UseCaseInteractor -> Presenterの順番で処理が進んでいくことを示しています。
+![flow_of_control](./flow_of_control.jpg)
 
-### クラス構成
-flow of control以外にも白抜きや黒などの矢印を指しているものがあります。矢印は、いわゆる依存関係というものを表している図です。
-Controllerは、UseCaseInputPortに依存していることを表しています。
+`flow of control`とは読んで字のごとく、`「制御の流れ」`という意味で、プログラムの処理の順番のことです。
+図で見れば、`Flow of control`は、`Controller -> UseCaseInteractor -> Presenter`の順番で処理が進んでいくことを示しています。
+
+## クラス構成
+`flow of control`以外にも`白抜きや黒などの矢印`を指しているものがあります。
+
+矢印は、いわゆる`依存関係`というものを表している図です。
+`Controller`は、`UseCaseInputPort`に依存していることを表しています。
 
 
-### クラスでみる制御の流れ
+## クラスでみる制御の流れ
 - 1.ControllerがUseCaseInputPort(interface)を利用する（メソッドを呼ぶ）
 - 2.UseCaseInputPort の実装である UseCaseInteractor の処理が実行される
 - 3.UseCaseInteractor は処理の結果を UseCaseOutputPort に伝える
@@ -20,7 +25,7 @@ Controller -> UseCaseInteractor -> Presenterという順序で実行されてい
 
 ---
 
-### 実際のソースコード
+## 実際のソースコード
 - Controllerに該当
 
 [interface_adapters/controller.py](./interface_adapters/controller.py) Controllerクラス
@@ -34,8 +39,7 @@ input_portで受け取ったオブジェクトは、IEditStringUseCaseを継承�
 ちなみにIEditStringUseCaseを継承した具象オブジェクトは、UseCaseInteractorのことです。
 executeメソッドで、UseCaseInteractorに該当するオブジェクトのhandleメソッドを実行していることがわかります。
 
-```
-# -*- coding: utf-8 -*-
+```python
 from application_business_rules.interface_input_output import IEditStringUseCase
 
 
@@ -57,9 +61,7 @@ class Controller:
 IEditStringUseCase型を継承した具象クラスは、handleメソッドを実装させることを強制させます。
 UseCaseInteractorに該当するクラスにIEditStringUseCase型を継承させます。
 
-```
-# -*- coding: utf-8 -*-
-
+```python
 from abc import ABCMeta, abstractmethod
 
 class IEditStringUseCase(metaclass=ABCMeta):

@@ -1,0 +1,10 @@
+[flake8]
+ignore=E402, E501, A003, W504
+; exclude=db/migrations/versions/*,app/models/__init__.py,app/routers/__init__.py,db/replace/*
+max-complexity=10
+per-file-ignores=
+    ; app/auth.py:B008
+
+classmethod-decorators =
+    classmethod
+    validator

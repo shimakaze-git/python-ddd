@@ -1,0 +1,40 @@
+{
+  "editor.formatOnSave": true,
+  "python.languageServer": "Pylance",
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.typeCheckingMode": "strict",
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.extraPaths": [
+    "/usr/local/lib/python3.11/site-packages/",
+    "../flow-of-control"
+  ],
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.pycodestyleEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+    "--ignore=E402, E501",
+    // "--exclude=app/models/__init__.py,app/routers/__init__.py"
+  ],
+  "python.formatting.provider": "autopep8",
+  "python.formatting.autopep8Args": [
+    "--indent-size=4",
+    "--max-line-length",
+    "160",
+    // "--ignore=E402, E501"
+  ],
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportUnusedImport": "information",
+    "reportMissingImports": "information",
+    "reportUnknownMemberType": "information",
+    "reportOptionalCall": "information",
+    "reportUnknownVariableType": "none",
+    "reportImportCycles": "information"
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false
+  }
+}
